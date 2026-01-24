@@ -4,8 +4,32 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ImageAI Pro - AI-Powered Image Processing</title>
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%236666ff' rx='20'/><text x='50' y='65' font-size='50' text-anchor='middle' fill='white' font-weight='bold'>AI</text></svg>">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%236666ff' rx='20'/%3E%3Ctext x='50' y='65' font-size='50' text-anchor='middle' fill='white' font-weight='bold'%3EAI%3C/text%3E%3C/svg%3E">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // Page load detection and error tracking
+        window.addEventListener('load', () => {
+            console.log('✅ Page loaded successfully');
+            console.log('📍 API URL: https://tupiaianji.dongchenghe30.workers.dev/');
+            console.log('📅 Timestamp:', new Date().toISOString());
+        });
+
+        // Error tracking
+        window.addEventListener('error', (event) => {
+            console.error('❌ Error caught:', {
+                message: event.message,
+                filename: event.filename,
+                lineno: event.lineno,
+                colno: event.colno,
+                error: event.error
+            });
+        });
+
+        // Unhandled promise rejection tracking
+        window.addEventListener('unhandledrejection', (event) => {
+            console.error('❌ Unhandled promise rejection:', event.reason);
+        });
+    </script>
     <style>
         .gradient-bg {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -362,8 +386,24 @@
 
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
-            const dropZone = document.getElementById('dropZone');
-            const fileInput = document.getElementById('fileInput');
+            console.log('🔧 Initializing application...');
+
+            try {
+                const dropZone = document.getElementById('dropZone');
+                const fileInput = document.getElementById('fileInput');
+
+                // Validate DOM elements
+                if (!dropZone) {
+                    throw new Error('Drop zone element not found (id="dropZone")');
+                }
+                if (!fileInput) {
+                    throw new Error('File input element not found (id="fileInput")');
+                }
+
+                console.log('✅ DOM elements found:', {
+                    dropZone: !!dropZone,
+                    fileInput: !!fileInput
+                });
 
             dropZone.addEventListener('click', () => fileInput.click());
 
@@ -423,7 +463,18 @@
             });
 
             // Batch processing
-            document.getElementById('batchProcessBtn').addEventListener('click', batchProcessImages);
+            const batchProcessBtn = document.getElementById('batchProcessBtn');
+            if (batchProcessBtn) {
+                batchProcessBtn.addEventListener('click', batchProcessImages);
+                console.log('✅ Batch processing button initialized');
+            } else {
+                console.warn('⚠️ Batch processing button not found');
+            }
+
+            console.log('✅ Application initialized successfully');
+        } catch (error) {
+            console.error('❌ Initialization failed:', error);
+            alert('Error: Failed to initialize the application. Please refresh the page.\n\nDetails: ' + error.message);
         });
 
         function handleFiles(files) {
@@ -489,6 +540,13 @@
             const formData = new FormData();
             formData.append('image', file);
 
+            console.log('🚀 Starting image processing:', {
+                operation: operation,
+                fileName: file.name,
+                fileSize: file.size,
+                fileType: file.type
+            });
+
             try {
                 showToast('Processing image...', 'info');
 
@@ -502,10 +560,12 @@
                     case 'compress':
                         endpoint = 'compress';
                         formData.append('quality', document.getElementById('quality').value);
+                        console.log('📝 Quality:', document.getElementById('quality').value);
                         break;
                     case 'convert':
                         endpoint = 'convert';
                         formData.append('format', document.getElementById('format').value);
+                        console.log('📝 Format:', document.getElementById('format').value);
                         break;
                     case 'crop':
                         endpoint = 'edit';
@@ -517,6 +577,7 @@
                             height: document.getElementById('cropH').value
                         };
                         formData.append('params', JSON.stringify(params));
+                        console.log('📝 Crop params:', params);
                         break;
                     case 'rotate':
                         endpoint = 'edit';
@@ -524,6 +585,7 @@
                         formData.append('params', JSON.stringify({
                             angle: document.getElementById('rotation').value
                         }));
+                        console.log('📝 Rotation:', document.getElementById('rotation').value);
                         break;
                     case 'flip':
                         endpoint = 'edit';
@@ -531,6 +593,7 @@
                         formData.append('params', JSON.stringify({
                             direction: document.getElementById('flipDirection').value
                         }));
+                        console.log('📝 Flip direction:', document.getElementById('flipDirection').value);
                         break;
                     case 'adjust':
                         endpoint = 'optimize';
@@ -540,6 +603,7 @@
                             saturation: document.getElementById('saturation').value
                         };
                         formData.append('adjustments', JSON.stringify(adjustments));
+                        console.log('📝 Adjustments:', adjustments);
                         break;
                     case 'watermark':
                         endpoint = 'watermark';
@@ -547,32 +611,55 @@
                         formData.append('content', document.getElementById('watermarkText').value);
                         formData.append('position', document.getElementById('watermarkPosition').value);
                         formData.append('opacity', document.getElementById('watermarkOpacity').value);
+                        console.log('📝 Watermark settings:', {
+                            type: document.getElementById('watermarkType').value,
+                            content: document.getElementById('watermarkText').value,
+                            position: document.getElementById('watermarkPosition').value,
+                            opacity: document.getElementById('watermarkOpacity').value
+                        });
                         break;
                     case 'filters':
                         endpoint = 'filters';
                         formData.append('filter', selectedFilter);
+                        console.log('📝 Filter:', selectedFilter);
                         break;
                     default:
-                        throw new Error('Unknown operation');
+                        throw new Error('Unknown operation: ' + operation);
                 }
 
-                const response = await fetch(`${API_BASE_URL}api/${endpoint}`, {
+                const requestUrl = `${API_BASE_URL}api/${endpoint}`;
+                console.log('📡 Sending request to:', requestUrl);
+
+                const response = await fetch(requestUrl, {
                     method: 'POST',
                     body: formData
                 });
 
-                const result = await response.json();
+                console.log('📥 Response status:', response.status, response.statusText);
 
-                if (result.success !== false) {
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const result = await response.json();
+                console.log('📦 Response data:', result);
+
+                if (result.success === true) {
                     displayResult(file, result);
                     showToast('Image processed successfully!', 'success');
                 } else {
-                    showToast('Processing failed: ' + (result.error || 'Unknown error'), 'error');
+                    throw new Error(result.error || 'Processing failed with unknown error');
                 }
 
             } catch (error) {
-                console.error('Error processing image:', error);
-                showToast('Error processing image. Please try again.', 'error');
+                console.error('❌ Error processing image:', error);
+                console.error('📍 Request URL:', `${API_BASE_URL}api/${endpoint}`);
+                console.error('🔍 Error details:', {
+                    name: error.name,
+                    message: error.message,
+                    stack: error.stack
+                });
+                showToast('Error: ' + error.message, 'error');
             }
         }
 
@@ -586,9 +673,19 @@
                 return;
             }
 
+            console.log('🚀 Starting batch processing:', {
+                totalFiles: uploadedFiles.length
+            });
+
             const progressContainer = document.getElementById('progressContainer');
             const progressBar = document.getElementById('progressBar');
             const progressText = document.getElementById('progressText');
+
+            if (!progressContainer || !progressBar || !progressText) {
+                console.error('❌ Progress elements not found');
+                showToast('Error: UI elements not found', 'error');
+                return;
+            }
 
             progressContainer.classList.remove('hidden');
 
@@ -598,20 +695,29 @@
                 formData.append('image', file);
                 formData.append('images[' + i + ']', file);
 
+                console.log(`📤 Processing file ${i + 1}/${uploadedFiles.length}:`, file.name);
+
                 try {
                     const response = await fetch(`${API_BASE_URL}api/batch`, {
                         method: 'POST',
                         body: formData
                     });
 
+                    console.log(`📥 Response for file ${i + 1}:`, response.status);
+
+                    if (!response.ok) {
+                        console.error(`❌ File ${i + 1} failed:`, response.statusText);
+                    }
+
                     const result = await response.json();
+                    console.log(`📦 Result for file ${i + 1}:`, result);
 
                     const progress = Math.round(((i + 1) / uploadedFiles.length) * 100);
                     progressBar.style.width = progress + '%';
                     progressText.textContent = progress + '%';
 
                 } catch (error) {
-                    console.error('Error processing batch:', error);
+                    console.error(`❌ Error processing file ${i + 1}:`, error);
                 }
             }
 
@@ -619,6 +725,7 @@
                 progressContainer.classList.add('hidden');
                 progressBar.style.width = '0%';
                 showToast('Batch processing completed!', 'success');
+                console.log('✅ Batch processing completed');
             }, 500);
         }
 

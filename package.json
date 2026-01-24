@@ -5,7 +5,11 @@
   "main": "index.js",
   "scripts": {
     "dev": "live-server pages --port=3000 --host=0.0.0.0 --open=/index.html --watch=pages --wait=500",
-    "start": "node server.js"
+    "start": "node server.js",
+    "test": "node test-deployment.js",
+    "worker:dev": "cd worker && wrangler dev",
+    "worker:deploy": "cd worker && wrangler deploy",
+    "worker:logs": "cd worker && wrangler tail"
   },
   "keywords": [
     "image",
@@ -16,6 +20,7 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
-    "live-server": "^1.2.2"
+    "live-server": "^1.2.2",
+    "undici": "^6.0.0"
   }
 }
