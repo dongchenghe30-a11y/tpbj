@@ -89,9 +89,10 @@ export default {
           console.log('Image size:', arrayBuffer.byteLength, 'bytes');
 
           // Call Workers AI using Native Binding
-          // Using background removal model from Workers AI
-          const aiResponse = await env.AI.run('@cf/imgly/background-removal', {
-            image: [...imageData]
+          // Using stable-diffusion inpainting model (available in Workers AI)
+          const aiResponse = await env.AI.run('@cf/runwayml/stable-diffusion-v1-5-inpainting', {
+            image: [...imageData],
+            prompt: 'remove background, transparent background, white background'
           });
 
           console.log('Workers AI response received:', typeof aiResponse, aiResponse);
