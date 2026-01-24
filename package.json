@@ -1,0 +1,21 @@
+{
+  "name": "imageai-pro",
+  "version": "1.0.0",
+  "description": "AI-powered image processing platform",
+  "main": "index.js",
+  "scripts": {
+    "dev": "live-server pages --port=3000 --host=0.0.0.0 --open=/index.html --watch=pages --wait=500",
+    "start": "node server.js"
+  },
+  "keywords": [
+    "image",
+    "processing",
+    "ai",
+    "cloudflare"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "live-server": "^1.2.2"
+  }
+}

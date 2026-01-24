@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ImageAI Pro - AI-Powered Image Processing</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%236666ff' rx='20'/><text x='50' y='65' font-size='50' text-anchor='middle' fill='white' font-weight='bold'>AI</text></svg>">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+        .drop-zone {
+            border: 3px dashed #667eea;
+            transition: all 0.3s ease;
+        }
+        .drop-zone.dragover {
+            border-color: #764ba2;
+            background-color: rgba(102, 126, 234, 0.1);
+        }
+        .progress-bar {
+            transition: width 0.3s ease;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white min-h-screen">
+    <!-- Header -->
+    <header class="gradient-bg py-4 shadow-lg">
+        <div class="container mx-auto px-4">
+            <nav class="flex justify-between items-center">
+                <div class="flex items-center space-x-2">
+                    <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
+                        <span class="text-purple-600 font-bold text-lg">AI</span>
+                    </div>
+                    <span class="text-2xl font-bold">ImageAI Pro</span>
+                </div>
+                <div class="hidden md:flex space-x-6">
+                    <a href="#features" class="hover:text-purple-200 transition">Features</a>
+                    <a href="#tools" class="hover:text-purple-200 transition">Tools</a>
+                    <a href="#batch" class="hover:text-purple-200 transition">Batch Process</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="py-20 bg-gradient-to-b from-gray-900 to-gray-800">
+        <div class="container mx-auto px-4 text-center">
+            <h1 class="text-5xl md:text-6xl font-bold mb-6">
+                Transform Your Images with 
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">AI Power</span>
+            </h1>
+            <p class="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
+                Professional image processing tools powered by Cloudflare Workers AI. 
+                Remove backgrounds, compress, convert, and edit images instantly.
+            </p>
+            <a href="#tools" class="inline-block bg-gradient-to-r from-purple-500 to-pink-500 px-8 py-4 rounded-full text-lg font-semibold hover:from-purple-600 hover:to-pink-600 transition transform hover:scale-105">
+                Get Started Free
+            </a>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-20 bg-gray-800">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl font-bold text-center mb-12">Powerful Features</h2>
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="feature-card bg-gray-700 p-6 rounded-xl transition-all duration-300">
+                    <div class="w-16 h-16 bg-purple-500 rounded-lg flex items-center justify-center mb-4">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">AI Background Removal</h3>
+                    <p class="text-gray-400">Remove backgrounds instantly with AI. Perfect for e-commerce and social media.</p>
+                </div>
+
+                <div class="feature-card bg-gray-700 p-6 rounded-xl transition-all duration-300">
+                    <div class="w-16 h-16 bg-green-500 rounded-lg flex items-center justify-center mb-4">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Smart Compression</h3>
+                    <p class="text-gray-400">Reduce file size without quality loss. Choose your compression level.</p>
+                </div>
+
+                <div class="feature-card bg-gray-700 p-6 rounded-xl transition-all duration-300">
+                    <div class="w-16 h-16 bg-blue-500 rounded-lg flex items-center justify-center mb-4">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Format Conversion</h3>
+                    <p class="text-gray-400">Convert between JPG, PNG, WebP, and GIF formats effortlessly.</p>
+                </div>
+
+                <div class="feature-card bg-gray-700 p-6 rounded-xl transition-all duration-300">
+                    <div class="w-16 h-16 bg-yellow-500 rounded-lg flex items-center justify-center mb-4">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Advanced Editing</h3>
+                    <p class="text-gray-400">Crop, rotate, flip, and adjust brightness, contrast, and saturation.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tools Section -->
+    <section id="tools" class="py-20 bg-gray-900">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl font-bold text-center mb-12">Image Processing Tools</h2>
+            
+            <!-- Upload Zone -->
+            <div class="max-w-4xl mx-auto mb-12">
+                <div id="dropZone" class="drop-zone rounded-2xl p-12 text-center bg-gray-800 cursor-pointer">
+                    <svg class="w-20 h-20 mx-auto mb-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                    </svg>
+                    <p class="text-2xl mb-2">Drop your image here or click to upload</p>
+                    <p class="text-gray-400">Supports JPG, PNG, WebP, GIF</p>
+                    <input type="file" id="fileInput" class="hidden" accept="image/*" multiple>
+                </div>
+            </div>
+
+            <!-- Preview Area -->
+            <div id="previewArea" class="max-w-4xl mx-auto mb-12 hidden">
+                <div class="bg-gray-800 rounded-2xl p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-2xl font-semibold">Preview</h3>
+                        <button id="clearBtn" class="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-lg transition">Clear All</button>
+                    </div>
+                    <div id="imagePreview" class="grid grid-cols-2 md:grid-cols-3 gap-4"></div>
+                </div>
+            </div>
+
+            <!-- Tool Selection -->
+            <div class="max-w-6xl mx-auto">
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Background Removal -->
+                    <div class="tool-card bg-gray-800 rounded-xl p-6 cursor-pointer hover:bg-gray-700 transition" data-tool="remove-bg">
+                        <h3 class="text-xl font-semibold mb-3 flex items-center">
+                            <span class="text-purple-400 mr-2">✨</span> Background Removal
+                        </h3>
+                        <p class="text-gray-400 mb-4">AI-powered background removal for perfect cutouts</p>
+                        <button class="bg-purple-500 hover:bg-purple-600 px-4 py-2 rounded-lg transition w-full" onclick="processImage('remove-bg')">
+                            Remove Background
+                        </button>
+                    </div>
+
+                    <!-- Compression -->
+                    <div class="tool-card bg-gray-800 rounded-xl p-6 cursor-pointer hover:bg-gray-700 transition" data-tool="compress">
+                        <h3 class="text-xl font-semibold mb-3 flex items-center">
+                            <span class="text-green-400 mr-2">🗜️</span> Compress Image
+                        </h3>
+                        <div class="mb-4">
+                            <label class="block text-sm text-gray-400 mb-2">Quality: <span id="qualityValue">80</span>%</label>
+                            <input type="range" id="quality" min="10" max="100" value="80" class="w-full">
+                        </div>
+                        <button class="bg-green-500 hover:bg-green-600 px-4 py-2 rounded-lg transition w-full" onclick="processImage('compress')">
+                            Compress
+                        </button>
+                    </div>
+
+                    <!-- Format Conversion -->
+                    <div class="tool-card bg-gray-800 rounded-xl p-6 cursor-pointer hover:bg-gray-700 transition" data-tool="convert">
+                        <h3 class="text-xl font-semibold mb-3 flex items-center">
+                            <span class="text-blue-400 mr-2">🔄</span> Format Conversion
+                        </h3>
+                        <div class="mb-4">
+                            <label class="block text-sm text-gray-400 mb-2">Target Format</label>
+                            <select id="format" class="w-full bg-gray-700 rounded-lg px-4 py-2 text-white">
+                                <option value="png">PNG</option>
+                                <option value="jpg">JPG</option>
+                                <option value="webp">WebP</option>
+                                <option value="gif">GIF</option>
+                            </select>
+                        </div>
+                        <button class="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded-lg transition w-full" onclick="processImage('convert')">
+                            Convert
+                        </button>
+                    </div>
+
+                    <!-- Crop -->
+                    <div class="tool-card bg-gray-800 rounded-xl p-6 cursor-pointer hover:bg-gray-700 transition" data-tool="crop">
+                        <h3 class="text-xl font-semibold mb-3 flex items-center">
+                            <span class="text-yellow-400 mr-2">✂️</span> Crop Image
+                        </h3>
+                        <div class="grid grid-cols-2 gap-2 mb-4">
+                            <input type="number" id="cropX" placeholder="X" class="bg-gray-700 rounded px-3 py-2 text-white">
+                            <input type="number" id="cropY" placeholder="Y" class="bg-gray-700 rounded px-3 py-2 text-white">
+                            <input type="number" id="cropW" placeholder="Width" class="bg-gray-700 rounded px-3 py-2 text-white">
+                            <input type="number" id="cropH" placeholder="Height" class="bg-gray-700 rounded px-3 py-2 text-white">
+                        </div>
+                        <button class="bg-yellow-500 hover:bg-yellow-600 px-4 py-2 rounded-lg transition w-full" onclick="processImage('crop')">
+                            Crop
+                        </button>
+                    </div>
+
+                    <!-- Rotate -->
+                    <div class="tool-card bg-gray-800 rounded-xl p-6 cursor-pointer hover:bg-gray-700 transition" data-tool="rotate">
+                        <h3 class="text-xl font-semibold mb-3 flex items-center">
+                            <span class="text-orange-400 mr-2">🔄</span> Rotate Image
+                        </h3>
+                        <div class="mb-4">
+                            <label class="block text-sm text-gray-400 mb-2">Rotation: <span id="rotationValue">90</span>°</label>
+                            <input type="range" id="rotation" min="0" max="360" value="90" step="90" class="w-full">
+                        </div>
+                        <button class="bg-orange-500 hover:bg-orange-600 px-4 py-2 rounded-lg transition w-full" onclick="processImage('rotate')">
+                            Rotate
+                        </button>
+                    </div>
+
+                    <!-- Flip -->
+                    <div class="tool-card bg-gray-800 rounded-xl p-6 cursor-pointer hover:bg-gray-700 transition" data-tool="flip">
+                        <h3 class="text-xl font-semibold mb-3 flex items-center">
+                            <span class="text-pink-400 mr-2">↔️</span> Flip Image
+                        </h3>
+                        <div class="mb-4">
+                            <select id="flipDirection" class="w-full bg-gray-700 rounded-lg px-4 py-2 text-white">
+                                <option value="horizontal">Horizontal</option>
+                                <option value="vertical">Vertical</option>
+                            </select>
+                        </div>
+                        <button class="bg-pink-500 hover:bg-pink-600 px-4 py-2 rounded-lg transition w-full" onclick="processImage('flip')">
+                            Flip
+                        </button>
+                    </div>
+
+                    <!-- Adjustments -->
+                    <div class="tool-card bg-gray-800 rounded-xl p-6 cursor-pointer hover:bg-gray-700 transition" data-tool="adjust">
+                        <h3 class="text-xl font-semibold mb-3 flex items-center">
+                            <span class="text-indigo-400 mr-2">🎨</span> Adjustments
+                        </h3>
+                        <div class="space-y-3 mb-4">
+                            <div>
+                                <label class="block text-sm text-gray-400 mb-1">Brightness: <span id="brightnessValue">100</span>%</label>
+                                <input type="range" id="brightness" min="0" max="200" value="100" class="w-full">
+                            </div>
+                            <div>
+                                <label class="block text-sm text-gray-400 mb-1">Contrast: <span id="contrastValue">100</span>%</label>
+                                <input type="range" id="contrast" min="0" max="200" value="100" class="w-full">
+                            </div>
+                            <div>
+                                <label class="block text-sm text-gray-400 mb-1">Saturation: <span id="saturationValue">100</span>%</label>
+                                <input type="range" id="saturation" min="0" max="200" value="100" class="w-full">
+                            </div>
+                        </div>
+                        <button class="bg-indigo-500 hover:bg-indigo-600 px-4 py-2 rounded-lg transition w-full" onclick="processImage('adjust')">
+                            Apply Adjustments
+                        </button>
+                    </div>
+
+                    <!-- Watermark -->
+                    <div class="tool-card bg-gray-800 rounded-xl p-6 cursor-pointer hover:bg-gray-700 transition" data-tool="watermark">
+                        <h3 class="text-xl font-semibold mb-3 flex items-center">
+                            <span class="text-cyan-400 mr-2">💧</span> Add Watermark
+                        </h3>
+                        <div class="space-y-3 mb-4">
+                            <select id="watermarkType" class="w-full bg-gray-700 rounded-lg px-4 py-2 text-white">
+                                <option value="text">Text</option>
+                                <option value="image">Image</option>
+                            </select>
+                            <input type="text" id="watermarkText" placeholder="Enter watermark text" class="w-full bg-gray-700 rounded px-3 py-2 text-white">
+                            <select id="watermarkPosition" class="w-full bg-gray-700 rounded-lg px-4 py-2 text-white">
+                                <option value="top-left">Top Left</option>
+                                <option value="top-right">Top Right</option>
+                                <option value="bottom-left">Bottom Left</option>
+                                <option value="bottom-right">Bottom Right</option>
+                                <option value="center">Center</option>
+                            </select>
+                            <input type="range" id="watermarkOpacity" min="0" max="100" value="50" class="w-full">
+                            <label class="text-sm text-gray-400">Opacity: <span id="watermarkOpacityValue">50</span>%</label>
+                        </div>
+                        <button class="bg-cyan-500 hover:bg-cyan-600 px-4 py-2 rounded-lg transition w-full" onclick="processImage('watermark')">
+                            Add Watermark
+                        </button>
+                    </div>
+
+                    <!-- Filters -->
+                    <div class="tool-card bg-gray-800 rounded-xl p-6 cursor-pointer hover:bg-gray-700 transition" data-tool="filters">
+                        <h3 class="text-xl font-semibold mb-3 flex items-center">
+                            <span class="text-teal-400 mr-2">🌈</span> Apply Filters
+                        </h3>
+                        <div class="grid grid-cols-2 gap-2 mb-4">
+                            <button class="filter-btn bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-lg transition text-sm" data-filter="grayscale">Grayscale</button>
+                            <button class="filter-btn bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-lg transition text-sm" data-filter="sepia">Sepia</button>
+                            <button class="filter-btn bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-lg transition text-sm" data-filter="blur">Blur</button>
+                            <button class="filter-btn bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-lg transition text-sm" data-filter="vintage">Vintage</button>
+                            <button class="filter-btn bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-lg transition text-sm" data-filter="cold">Cold</button>
+                            <button class="filter-btn bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-lg transition text-sm" data-filter="warm">Warm</button>
+                        </div>
+                        <button class="bg-teal-500 hover:bg-teal-600 px-4 py-2 rounded-lg transition w-full" onclick="applyFilter()">
+                            Apply Selected Filter
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Batch Processing Section -->
+    <section id="batch" class="py-20 bg-gray-800">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl font-bold text-center mb-12">Batch Processing</h2>
+            <div class="max-w-4xl mx-auto bg-gray-900 rounded-2xl p-8">
+                <p class="text-gray-300 mb-6 text-center">
+                    Select multiple images and apply the same operation to all of them at once.
+                </p>
+                <div class="text-center">
+                    <button id="batchProcessBtn" class="bg-gradient-to-r from-purple-500 to-pink-500 px-8 py-4 rounded-full text-lg font-semibold hover:from-purple-600 hover:to-pink-600 transition transform hover:scale-105">
+                        Process All Images
+                    </button>
+                </div>
+                <!-- Progress Bar -->
+                <div id="progressContainer" class="mt-8 hidden">
+                    <div class="flex justify-between text-sm text-gray-400 mb-2">
+                        <span>Processing...</span>
+                        <span id="progressText">0%</span>
+                    </div>
+                    <div class="w-full bg-gray-700 rounded-full h-4">
+                        <div id="progressBar" class="progress-bar bg-gradient-to-r from-purple-500 to-pink-500 h-4 rounded-full" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Results Section -->
+    <section id="results" class="py-20 bg-gray-900 hidden">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl font-bold text-center mb-12">Processing Results</h2>
+            <div class="max-w-6xl mx-auto">
+                <div id="resultsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 py-8">
+        <div class="container mx-auto px-4 text-center text-gray-400">
+            <p>&copy; 2026 ImageAI Pro. Powered by Cloudflare Workers AI.</p>
+        </div>
+    </footer>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg transform translate-y-20 opacity-0 transition-all duration-300 z-50">
+        <span id="toastMessage"></span>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'https://tupiaianji.dongchenghe30.workers.dev/';
+        let uploadedFiles = [];
+        let selectedFilter = 'grayscale';
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            const dropZone = document.getElementById('dropZone');
+            const fileInput = document.getElementById('fileInput');
+
+            dropZone.addEventListener('click', () => fileInput.click());
+
+            dropZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropZone.classList.add('dragover');
+            });
+
+            dropZone.addEventListener('dragleave', () => {
+                dropZone.classList.remove('dragover');
+            });
+
+            dropZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropZone.classList.remove('dragover');
+                handleFiles(e.dataTransfer.files);
+            });
+
+            fileInput.addEventListener('change', (e) => {
+                handleFiles(e.target.files);
+            });
+
+            document.getElementById('clearBtn').addEventListener('click', clearAll);
+
+            // Update slider values
+            document.getElementById('quality').addEventListener('input', (e) => {
+                document.getElementById('qualityValue').textContent = e.target.value;
+            });
+
+            document.getElementById('rotation').addEventListener('input', (e) => {
+                document.getElementById('rotationValue').textContent = e.target.value;
+            });
+
+            document.getElementById('brightness').addEventListener('input', (e) => {
+                document.getElementById('brightnessValue').textContent = e.target.value;
+            });
+
+            document.getElementById('contrast').addEventListener('input', (e) => {
+                document.getElementById('contrastValue').textContent = e.target.value;
+            });
+
+            document.getElementById('saturation').addEventListener('input', (e) => {
+                document.getElementById('saturationValue').textContent = e.target.value;
+            });
+
+            document.getElementById('watermarkOpacity').addEventListener('input', (e) => {
+                document.getElementById('watermarkOpacityValue').textContent = e.target.value;
+            });
+
+            // Filter selection
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('ring-2', 'ring-purple-500'));
+                    btn.classList.add('ring-2', 'ring-purple-500');
+                    selectedFilter = btn.dataset.filter;
+                });
+            });
+
+            // Batch processing
+            document.getElementById('batchProcessBtn').addEventListener('click', batchProcessImages);
+        });
+
+        function handleFiles(files) {
+            for (const file of files) {
+                if (file.type.startsWith('image/')) {
+                    uploadedFiles.push(file);
+                }
+            }
+            displayImages();
+        }
+
+        function displayImages() {
+            const previewArea = document.getElementById('previewArea');
+            const imagePreview = document.getElementById('imagePreview');
+
+            if (uploadedFiles.length === 0) {
+                previewArea.classList.add('hidden');
+                return;
+            }
+
+            previewArea.classList.remove('hidden');
+            imagePreview.innerHTML = '';
+
+            uploadedFiles.forEach((file, index) => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const div = document.createElement('div');
+                    div.className = 'relative group';
+                    div.innerHTML = `
+                        <img src="${e.target.result}" alt="Preview ${index + 1}" class="w-full h-40 object-cover rounded-lg">
+                        <button onclick="removeImage(${index})" class="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white w-8 h-8 rounded-full opacity-0 group-hover:opacity-100 transition">
+                            ×
+                        </button>
+                        <div class="absolute bottom-2 left-2 bg-black bg-opacity-50 px-2 py-1 rounded text-sm">
+                            ${file.name}
+                        </div>
+                    `;
+                    imagePreview.appendChild(div);
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function removeImage(index) {
+            uploadedFiles.splice(index, 1);
+            displayImages();
+        }
+
+        function clearAll() {
+            uploadedFiles = [];
+            displayImages();
+            document.getElementById('results').classList.add('hidden');
+            document.getElementById('resultsGrid').innerHTML = '';
+        }
+
+        async function processImage(operation) {
+            if (uploadedFiles.length === 0) {
+                showToast('Please upload an image first', 'error');
+                return;
+            }
+
+            const file = uploadedFiles[0];
+            const formData = new FormData();
+            formData.append('image', file);
+
+            try {
+                showToast('Processing image...', 'info');
+
+                let endpoint;
+                let additionalParams = {};
+
+                switch (operation) {
+                    case 'remove-bg':
+                        endpoint = 'remove-background';
+                        break;
+                    case 'compress':
+                        endpoint = 'compress';
+                        formData.append('quality', document.getElementById('quality').value);
+                        break;
+                    case 'convert':
+                        endpoint = 'convert';
+                        formData.append('format', document.getElementById('format').value);
+                        break;
+                    case 'crop':
+                        endpoint = 'edit';
+                        formData.append('operation', 'crop');
+                        const params = {
+                            x: document.getElementById('cropX').value,
+                            y: document.getElementById('cropY').value,
+                            width: document.getElementById('cropW').value,
+                            height: document.getElementById('cropH').value
+                        };
+                        formData.append('params', JSON.stringify(params));
+                        break;
+                    case 'rotate':
+                        endpoint = 'edit';
+                        formData.append('operation', 'rotate');
+                        formData.append('params', JSON.stringify({
+                            angle: document.getElementById('rotation').value
+                        }));
+                        break;
+                    case 'flip':
+                        endpoint = 'edit';
+                        formData.append('operation', 'flip');
+                        formData.append('params', JSON.stringify({
+                            direction: document.getElementById('flipDirection').value
+                        }));
+                        break;
+                    case 'adjust':
+                        endpoint = 'optimize';
+                        const adjustments = {
+                            brightness: document.getElementById('brightness').value,
+                            contrast: document.getElementById('contrast').value,
+                            saturation: document.getElementById('saturation').value
+                        };
+                        formData.append('adjustments', JSON.stringify(adjustments));
+                        break;
+                    case 'watermark':
+                        endpoint = 'watermark';
+                        formData.append('type', document.getElementById('watermarkType').value);
+                        formData.append('content', document.getElementById('watermarkText').value);
+                        formData.append('position', document.getElementById('watermarkPosition').value);
+                        formData.append('opacity', document.getElementById('watermarkOpacity').value);
+                        break;
+                    case 'filters':
+                        endpoint = 'filters';
+                        formData.append('filter', selectedFilter);
+                        break;
+                    default:
+                        throw new Error('Unknown operation');
+                }
+
+                const response = await fetch(`${API_BASE_URL}api/${endpoint}`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (result.success !== false) {
+                    displayResult(file, result);
+                    showToast('Image processed successfully!', 'success');
+                } else {
+                    showToast('Processing failed: ' + (result.error || 'Unknown error'), 'error');
+                }
+
+            } catch (error) {
+                console.error('Error processing image:', error);
+                showToast('Error processing image. Please try again.', 'error');
+            }
+        }
+
+        function applyFilter() {
+            processImage('filters');
+        }
+
+        async function batchProcessImages() {
+            if (uploadedFiles.length === 0) {
+                showToast('Please upload images first', 'error');
+                return;
+            }
+
+            const progressContainer = document.getElementById('progressContainer');
+            const progressBar = document.getElementById('progressBar');
+            const progressText = document.getElementById('progressText');
+
+            progressContainer.classList.remove('hidden');
+
+            for (let i = 0; i < uploadedFiles.length; i++) {
+                const file = uploadedFiles[i];
+                const formData = new FormData();
+                formData.append('image', file);
+                formData.append('images[' + i + ']', file);
+
+                try {
+                    const response = await fetch(`${API_BASE_URL}api/batch`, {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    const result = await response.json();
+
+                    const progress = Math.round(((i + 1) / uploadedFiles.length) * 100);
+                    progressBar.style.width = progress + '%';
+                    progressText.textContent = progress + '%';
+
+                } catch (error) {
+                    console.error('Error processing batch:', error);
+                }
+            }
+
+            setTimeout(() => {
+                progressContainer.classList.add('hidden');
+                progressBar.style.width = '0%';
+                showToast('Batch processing completed!', 'success');
+            }, 500);
+        }
+
+        function displayResult(originalFile, result) {
+            const resultsSection = document.getElementById('results');
+            const resultsGrid = document.getElementById('resultsGrid');
+
+            resultsSection.classList.remove('hidden');
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const div = document.createElement('div');
+                div.className = 'bg-gray-800 rounded-xl p-4';
+                div.innerHTML = `
+                    <h4 class="text-lg font-semibold mb-3">Processed Result</h4>
+                    <div class="space-y-2">
+                        <img src="${e.target.result}" alt="Processed" class="w-full h-48 object-cover rounded-lg">
+                        <div class="flex justify-between items-center mt-3">
+                            <span class="text-sm text-gray-400">${originalFile.name}</span>
+                            <button onclick="downloadImage('${e.target.result}', 'processed-${originalFile.name}')" 
+                                    class="bg-green-500 hover:bg-green-600 px-4 py-2 rounded-lg transition text-sm">
+                                Download
+                            </button>
+                        </div>
+                    </div>
+                `;
+                resultsGrid.appendChild(div);
+            };
+            reader.readAsDataURL(originalFile);
+        }
+
+        function downloadImage(dataUrl, filename) {
+            const link = document.createElement('a');
+            link.href = dataUrl;
+            link.download = filename;
+            link.click();
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+
+            toast.className = `fixed bottom-4 right-4 text-white px-6 py-3 rounded-lg shadow-lg transform transition-all duration-300 z-50 ${
+                type === 'success' ? 'bg-green-500' : 
+                type === 'error' ? 'bg-red-500' : 'bg-blue-500'
+            }`;
+
+            toastMessage.textContent = message;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
