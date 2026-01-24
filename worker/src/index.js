@@ -26,7 +26,7 @@ export default {
           message: 'ImageAI Pro API',
           status: 'online',
           version: '1.0.0',
-          ai_enabled: !!env.AI_API_TOKEN
+          ai_enabled: !!env.AI
         }), {
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
@@ -37,7 +37,7 @@ export default {
         return new Response(JSON.stringify({
           status: 'healthy',
           timestamp: new Date().toISOString(),
-          ai_configured: !!env.AI_API_TOKEN && !!env.ACCOUNT_ID,
+          ai_configured: !!env.AI,
           endpoints: [
             '/api/remove-background',
             '/api/compress',
@@ -53,7 +53,7 @@ export default {
         });
       }
 
-      // Background Removal API - USING WORKERS AI
+      // Background Removal API - USING WORKERS AI NATIVE BINDING
       if (path === '/api/remove-background' && request.method === 'POST') {
         const formData = await request.formData();
         const image = formData.get('image');
@@ -69,11 +69,11 @@ export default {
         }
 
         // Check if Workers AI is configured
-        if (!env.ACCOUNT_ID || !env.AI_API_TOKEN) {
-          console.error('Workers AI not configured: Missing ACCOUNT_ID or AI_API_TOKEN');
+        if (!env.AI) {
+          console.error('Workers AI not configured: Missing AI binding');
           return new Response(JSON.stringify({
             success: false,
-            error: 'Workers AI not configured. Please set ACCOUNT_ID and AI_API_TOKEN environment variables.',
+            error: 'Workers AI not configured. Please add AI binding in wrangler.toml',
             requiresConfiguration: true
           }), {
             status: 500,
@@ -83,42 +83,23 @@ export default {
 
         try {
           const arrayBuffer = await image.arrayBuffer();
+          const imageData = new Uint8Array(arrayBuffer);
 
           console.log('Calling Workers AI for background removal...');
           console.log('Image size:', arrayBuffer.byteLength, 'bytes');
 
-          // Call Workers AI API
-          const aiResponse = await fetch(
-            `https://api.cloudflare.com/client/v4/accounts/${env.ACCOUNT_ID}/ai/run/@cf/runwayml/stable-diffusion-v1-5-inpainting`,
-            {
-              method: 'POST',
-              headers: {
-                'Authorization': `Bearer ${env.AI_API_TOKEN}`,
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                image: [...new Uint8Array(arrayBuffer)],
-                prompt: 'remove background, transparent background, white background',
-              }),
-            }
-          );
+          // Call Workers AI using Native Binding
+          // Using background removal model from Workers AI
+          const aiResponse = await env.AI.run('@cf/imgly/background-removal', {
+            image: [...imageData]
+          });
 
-          console.log('Workers AI response status:', aiResponse.status);
-
-          if (!aiResponse.ok) {
-            const errorText = await aiResponse.text();
-            console.error('Workers AI error:', errorText);
-            throw new Error(`Workers AI failed: ${aiResponse.status} - ${errorText}`);
-          }
-
-          const aiResult = await aiResponse.json();
-
-          console.log('Workers AI result:', JSON.stringify(aiResult).substring(0, 200));
+          console.log('Workers AI response received');
 
           return new Response(JSON.stringify({
             success: true,
             message: 'Background removed successfully',
-            data: aiResult
+            data: aiResponse
           }), {
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
           });
