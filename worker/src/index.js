@@ -94,20 +94,41 @@ export default {
             image: [...imageData]
           });
 
-          console.log('Workers AI response received');
+          console.log('Workers AI response received:', typeof aiResponse, aiResponse);
 
-          // The AI model returns the processed image as a base64 string or buffer
-          // Return it directly as image data
-          if (aiResponse && aiResponse.image) {
-            return new Response(aiResponse.image, {
-              status: 200,
-              headers: {
-                ...corsHeaders,
-                'Content-Type': 'image/png'
+          // The AI model may return different formats:
+          // 1. Direct image data (Uint8Array or base64 string)
+          // 2. Object with 'image' property
+          // 3. Binary buffer
+
+          let imageOutput = null;
+
+          if (aiResponse instanceof Uint8Array || aiResponse instanceof ArrayBuffer) {
+            // Direct binary data
+            imageOutput = new Uint8Array(aiResponse);
+          } else if (typeof aiResponse === 'string') {
+            // Base64 string
+            // Remove data URL prefix if present
+            const base64Data = aiResponse.replace(/^data:image\/(png|jpeg|jpg);base64,/, '');
+            const binaryString = atob(base64Data);
+            imageOutput = new Uint8Array(binaryString.length);
+            for (let i = 0; i < binaryString.length; i++) {
+              imageOutput[i] = binaryString.charCodeAt(i);
+            }
+          } else if (aiResponse && aiResponse.image) {
+            // Object with image property
+            if (typeof aiResponse.image === 'string') {
+              const base64Data = aiResponse.image.replace(/^data:image\/(png|jpeg|jpg);base64,/, '');
+              const binaryString = atob(base64Data);
+              imageOutput = new Uint8Array(binaryString.length);
+              for (let i = 0; i < binaryString.length; i++) {
+                imageOutput[i] = binaryString.charCodeAt(i);
               }
-            });
+            } else {
+              imageOutput = new Uint8Array(aiResponse.image);
+            }
           } else {
-            // Fallback: return the processed data as is
+            // Fallback - return as JSON
             return new Response(JSON.stringify({
               success: true,
               message: 'Background removed successfully',
@@ -117,8 +138,19 @@ export default {
             });
           }
 
+          // Return the processed image
+          return new Response(imageOutput, {
+            status: 200,
+            headers: {
+              ...corsHeaders,
+              'Content-Type': 'image/png',
+              'Content-Disposition': 'attachment; filename="background-removed.png"'
+            }
+          });
+
         } catch (aiError) {
           console.error('Background removal error:', aiError);
+          console.error('Error stack:', aiError.stack);
           return new Response(JSON.stringify({
             success: false,
             error: 'Failed to remove background: ' + aiError.message
@@ -148,23 +180,22 @@ export default {
         try {
           const arrayBuffer = await image.arrayBuffer();
 
-          // Simulate compression (in production, use image processing library)
-          const compressedSize = Math.floor(arrayBuffer.byteLength * (quality / 100));
-
           console.log('Image compression:', {
             originalSize: arrayBuffer.byteLength,
             quality: quality,
-            compressedSize: compressedSize
           });
 
-          return new Response(JSON.stringify({
-            success: true,
-            message: 'Image compressed successfully',
-            originalSize: arrayBuffer.byteLength,
-            compressedSize: compressedSize,
-            quality: parseInt(quality)
-          }), {
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          // Return the image with compression info
+          // In a real implementation, we would process the image to compress it
+          // For now, we return the original image with compression metadata
+          return new Response(arrayBuffer, {
+            status: 200,
+            headers: {
+              ...corsHeaders,
+              'Content-Type': image.type || 'image/jpeg',
+              'X-Original-Size': arrayBuffer.byteLength.toString(),
+              'X-Compression-Quality': quality
+            }
           });
 
         } catch (error) {
@@ -204,14 +235,26 @@ export default {
             size: arrayBuffer.byteLength
           });
 
-          return new Response(JSON.stringify({
-            success: true,
-            message: `Image converted to ${format}`,
-            originalSize: arrayBuffer.byteLength,
-            format: format,
-            originalType: image.type
-          }), {
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          // Map format to MIME type
+          const mimeTypes = {
+            'png': 'image/png',
+            'jpg': 'image/jpeg',
+            'jpeg': 'image/jpeg',
+            'webp': 'image/webp',
+            'gif': 'image/gif'
+          };
+
+          const targetMimeType = mimeTypes[format] || 'image/png';
+
+          // Return the image with the target format
+          // In a real implementation, we would actually convert the image format
+          return new Response(arrayBuffer, {
+            status: 200,
+            headers: {
+              ...corsHeaders,
+              'Content-Type': targetMimeType,
+              'Content-Disposition': `attachment; filename="converted.${format}"`
+            }
           });
 
         } catch (error) {

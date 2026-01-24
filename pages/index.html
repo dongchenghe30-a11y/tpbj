@@ -405,7 +405,11 @@
                     fileInput: !!fileInput
                 });
 
-                dropZone.addEventListener('click', () => fileInput.click());
+            dropZone.addEventListener('click', () => {
+                // Clear the file input to allow re-uploading the same file
+                fileInput.value = '';
+                fileInput.click();
+            });
 
                 dropZone.addEventListener('dragover', (e) => {
                     e.preventDefault();
@@ -553,20 +557,27 @@
 
                 let endpoint;
                 let additionalParams = {};
+                let responseFilename = file.name;
 
                 switch (operation) {
                     case 'remove-bg':
                         endpoint = 'remove-background';
+                        responseFilename = `bg-removed-${file.name}`;
                         break;
                     case 'compress':
                         endpoint = 'compress';
                         formData.append('quality', document.getElementById('quality').value);
                         console.log('📝 Quality:', document.getElementById('quality').value);
+                        responseFilename = `compressed-${file.name}`;
                         break;
                     case 'convert':
                         endpoint = 'convert';
-                        formData.append('format', document.getElementById('format').value);
-                        console.log('📝 Format:', document.getElementById('format').value);
+                        const targetFormat = document.getElementById('format').value;
+                        formData.append('format', targetFormat);
+                        console.log('📝 Format:', targetFormat);
+                        const extIndex = file.name.lastIndexOf('.');
+                        const baseName = extIndex > 0 ? file.name.substring(0, extIndex) : file.name;
+                        responseFilename = `converted-${baseName}.${targetFormat}`;
                         break;
                     case 'crop':
                         endpoint = 'edit';
@@ -579,6 +590,7 @@
                         };
                         formData.append('params', JSON.stringify(params));
                         console.log('📝 Crop params:', params);
+                        responseFilename = `cropped-${file.name}`;
                         break;
                     case 'rotate':
                         endpoint = 'edit';
@@ -587,6 +599,7 @@
                             angle: document.getElementById('rotation').value
                         }));
                         console.log('📝 Rotation:', document.getElementById('rotation').value);
+                        responseFilename = `rotated-${file.name}`;
                         break;
                     case 'flip':
                         endpoint = 'edit';
@@ -595,6 +608,7 @@
                             direction: document.getElementById('flipDirection').value
                         }));
                         console.log('📝 Flip direction:', document.getElementById('flipDirection').value);
+                        responseFilename = `flipped-${file.name}`;
                         break;
                     case 'adjust':
                         endpoint = 'optimize';
@@ -605,6 +619,7 @@
                         };
                         formData.append('adjustments', JSON.stringify(adjustments));
                         console.log('📝 Adjustments:', adjustments);
+                        responseFilename = `adjusted-${file.name}`;
                         break;
                     case 'watermark':
                         endpoint = 'watermark';
@@ -618,11 +633,13 @@
                             position: document.getElementById('watermarkPosition').value,
                             opacity: document.getElementById('watermarkOpacity').value
                         });
+                        responseFilename = `watermarked-${file.name}`;
                         break;
                     case 'filters':
                         endpoint = 'filters';
                         formData.append('filter', selectedFilter);
                         console.log('📝 Filter:', selectedFilter);
+                        responseFilename = `filtered-${file.name}`;
                         break;
                     default:
                         throw new Error('Unknown operation: ' + operation);
@@ -652,7 +669,7 @@
                     console.log('🖼️ Received image data');
                     const blob = await response.blob();
                     const imageUrl = URL.createObjectURL(blob);
-                    displayResultImage(file, imageUrl, operation);
+                    displayResultImage(file, imageUrl, operation, responseFilename);
                     showToast('Image processed successfully!', 'success');
                 } else {
                     // JSON response
@@ -773,7 +790,7 @@
             reader.readAsDataURL(originalFile);
         }
 
-        function displayResultImage(originalFile, imageUrl, operation) {
+        function displayResultImage(originalFile, imageUrl, operation, filename) {
             const resultsSection = document.getElementById('results');
             const resultsGrid = document.getElementById('resultsGrid');
 
@@ -787,7 +804,7 @@
                     <img src="${imageUrl}" alt="Processed" class="w-full h-48 object-cover rounded-lg">
                     <div class="flex justify-between items-center mt-3">
                         <span class="text-sm text-gray-400">${originalFile.name}</span>
-                        <button onclick="downloadImage('${imageUrl}', '${operation}-${originalFile.name}')"
+                        <button onclick="downloadImage('${imageUrl}', '${filename}')"
                                 class="bg-green-500 hover:bg-green-600 px-4 py-2 rounded-lg transition text-sm">
                             Download
                         </button>
@@ -797,28 +814,53 @@
             resultsGrid.appendChild(div);
         }
 
-        function downloadImage(dataUrl, filename) {
+        function downloadImage(dataUrlOrBlob, filename) {
             const link = document.createElement('a');
-            link.href = dataUrl;
+            link.href = dataUrlOrBlob;
             link.download = filename;
+
+            // Ensure the file has the correct extension
+            if (!filename.match(/\.(jpg|jpeg|png|webp|gif)$/i)) {
+                filename = filename.replace(/\.[^.]+$/, '') + '.png';
+            }
+
+            document.body.appendChild(link);
             link.click();
+            document.body.removeChild(link);
+
+            // If it's a blob URL, revoke it after a delay to free memory
+            if (dataUrlOrBlob.startsWith('blob:')) {
+                setTimeout(() => {
+                    URL.revokeObjectURL(dataUrlOrBlob);
+                }, 1000);
+            }
         }
 
         function showToast(message, type = 'success') {
             const toast = document.getElementById('toast');
             const toastMessage = document.getElementById('toastMessage');
 
-            toast.className = `fixed bottom-4 right-4 text-white px-6 py-3 rounded-lg shadow-lg transform transition-all duration-300 z-50 ${
-                type === 'success' ? 'bg-green-500' : 
-                type === 'error' ? 'bg-red-500' : 'bg-blue-500'
-            }`;
-
-            toastMessage.textContent = message;
-            toast.classList.remove('translate-y-20', 'opacity-0');
+            // Auto-hide any existing toast
+            toast.classList.add('translate-y-20', 'opacity-0');
 
             setTimeout(() => {
-                toast.classList.add('translate-y-20', 'opacity-0');
-            }, 3000);
+                const bgColors = {
+                    'success': 'bg-green-500',
+                    'error': 'bg-red-500',
+                    'info': 'bg-blue-500',
+                    'warning': 'bg-yellow-500'
+                };
+
+                toast.className = `fixed bottom-4 right-4 text-white px-6 py-3 rounded-lg shadow-lg transform transition-all duration-300 z-50 ${bgColors[type] || 'bg-blue-500'}`;
+
+                toastMessage.textContent = message;
+                toast.classList.remove('translate-y-20', 'opacity-0');
+
+                // Auto-hide after 4 seconds
+                setTimeout(() => {
+                    toast.classList.add('translate-y-20', 'opacity-0');
+                }, 4000);
+            }, 100);
         }
     </script>
 </body>
