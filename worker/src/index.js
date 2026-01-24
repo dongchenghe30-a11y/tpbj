@@ -96,13 +96,26 @@ export default {
 
           console.log('Workers AI response received');
 
-          return new Response(JSON.stringify({
-            success: true,
-            message: 'Background removed successfully',
-            data: aiResponse
-          }), {
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          });
+          // The AI model returns the processed image as a base64 string or buffer
+          // Return it directly as image data
+          if (aiResponse && aiResponse.image) {
+            return new Response(aiResponse.image, {
+              status: 200,
+              headers: {
+                ...corsHeaders,
+                'Content-Type': 'image/png'
+              }
+            });
+          } else {
+            // Fallback: return the processed data as is
+            return new Response(JSON.stringify({
+              success: true,
+              message: 'Background removed successfully',
+              data: aiResponse
+            }), {
+              headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            });
+          }
 
         } catch (aiError) {
           console.error('Background removal error:', aiError);

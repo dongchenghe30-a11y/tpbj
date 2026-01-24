@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Connection Test</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white min-h-screen p-8">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-3xl font-bold mb-8">API Connection Test</h1>
+
+        <div class="space-y-6">
+            <!-- Test Worker Connection -->
+            <div class="bg-gray-800 rounded-lg p-6">
+                <h2 class="text-xl font-semibold mb-4">Test Worker Connection</h2>
+                <button onclick="testWorkerConnection()" class="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded">
+                    Test Connection
+                </button>
+                <div id="workerResult" class="mt-4 font-mono text-sm"></div>
+            </div>
+
+            <!-- Test Health Check -->
+            <div class="bg-gray-800 rounded-lg p-6">
+                <h2 class="text-xl font-semibold mb-4">Test Health Check</h2>
+                <button onclick="testHealthCheck()" class="bg-green-500 hover:bg-green-600 px-4 py-2 rounded">
+                    Check Health
+                </button>
+                <div id="healthResult" class="mt-4 font-mono text-sm"></div>
+            </div>
+
+            <!-- Test Background Removal -->
+            <div class="bg-gray-800 rounded-lg p-6">
+                <h2 class="text-xl font-semibold mb-4">Test Background Removal</h2>
+                <input type="file" id="testImage" accept="image/*" class="mb-4">
+                <button onclick="testBackgroundRemoval()" class="bg-purple-500 hover:bg-purple-600 px-4 py-2 rounded">
+                    Test AI Background Removal
+                </button>
+                <div id="bgRemovalResult" class="mt-4 font-mono text-sm"></div>
+                <div id="bgRemovalImage" class="mt-4"></div>
+            </div>
+
+            <!-- Console Log -->
+            <div class="bg-gray-800 rounded-lg p-6">
+                <h2 class="text-xl font-semibold mb-4">Console Log</h2>
+                <div id="consoleLog" class="bg-black rounded p-4 font-mono text-sm h-64 overflow-y-auto">
+                    <p class="text-gray-500">Waiting for tests...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'https://tupiaianji.dongchenghe30.workers.dev/';
+
+        function log(message, type = 'info') {
+            const consoleLog = document.getElementById('consoleLog');
+            const timestamp = new Date().toISOString();
+            const colorClass = type === 'error' ? 'text-red-400' :
+                              type === 'success' ? 'text-green-400' :
+                              type === 'warning' ? 'text-yellow-400' : 'text-white';
+            consoleLog.innerHTML += `<p class="${colorClass}">[${timestamp}] ${message}</p>`;
+            consoleLog.scrollTop = consoleLog.scrollHeight;
+            console.log(message);
+        }
+
+        async function testWorkerConnection() {
+            const resultDiv = document.getElementById('workerResult');
+            resultDiv.innerHTML = '<p class="text-yellow-400">Testing...</p>';
+
+            try {
+                log('Testing Worker connection...');
+                const response = await fetch(API_BASE_URL);
+                log(`Response status: ${response.status} ${response.statusText}`);
+
+                const data = await response.json();
+                log('Response data: ' + JSON.stringify(data));
+
+                resultDiv.innerHTML = `
+                    <pre class="text-green-400">${JSON.stringify(data, null, 2)}</pre>
+                `;
+                log('✅ Worker connection successful!', 'success');
+            } catch (error) {
+                log('❌ Worker connection failed: ' + error.message, 'error');
+                resultDiv.innerHTML = `<p class="text-red-400">Error: ${error.message}</p>`;
+            }
+        }
+
+        async function testHealthCheck() {
+            const resultDiv = document.getElementById('healthResult');
+            resultDiv.innerHTML = '<p class="text-yellow-400">Checking...</p>';
+
+            try {
+                log('Checking API health...');
+                const response = await fetch(`${API_BASE_URL}api/health`);
+                log(`Response status: ${response.status} ${response.statusText}`);
+
+                const data = await response.json();
+                log('Health check result: ' + JSON.stringify(data));
+
+                resultDiv.innerHTML = `
+                    <pre class="text-green-400">${JSON.stringify(data, null, 2)}</pre>
+                `;
+                log('✅ Health check successful!', 'success');
+            } catch (error) {
+                log('❌ Health check failed: ' + error.message, 'error');
+                resultDiv.innerHTML = `<p class="text-red-400">Error: ${error.message}</p>`;
+            }
+        }
+
+        async function testBackgroundRemoval() {
+            const fileInput = document.getElementById('testImage');
+            const resultDiv = document.getElementById('bgRemovalResult');
+            const imageDiv = document.getElementById('bgRemovalImage');
+
+            if (!fileInput.files[0]) {
+                log('Please select an image first', 'warning');
+                return;
+            }
+
+            const file = fileInput.files[0];
+            resultDiv.innerHTML = '<p class="text-yellow-400">Processing...</p>';
+            imageDiv.innerHTML = '';
+
+            try {
+                log('Starting AI background removal...');
+                log(`File: ${file.name} (${file.size} bytes)`);
+
+                const formData = new FormData();
+                formData.append('image', file);
+
+                const response = await fetch(`${API_BASE_URL}api/remove-background`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                log(`Response status: ${response.status} ${response.statusText}`);
+                log(`Content-Type: ${response.headers.get('content-type')}`);
+
+                const contentType = response.headers.get('content-type');
+
+                if (contentType && contentType.startsWith('image/')) {
+                    log('Received image data');
+                    const blob = await response.blob();
+                    const imageUrl = URL.createObjectURL(blob);
+
+                    imageDiv.innerHTML = `
+                        <div class="flex gap-4">
+                            <div>
+                                <p class="text-sm text-gray-400 mb-2">Original</p>
+                                <img src="${URL.createObjectURL(file)}" class="w-48 h-48 object-cover rounded">
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-400 mb-2">Processed</p>
+                                <img src="${imageUrl}" class="w-48 h-48 object-cover rounded">
+                            </div>
+                        </div>
+                    `;
+
+                    resultDiv.innerHTML = `<p class="text-green-400">✅ Background removed successfully!</p>`;
+                    log('✅ AI background removal successful!', 'success');
+                } else {
+                    const data = await response.json();
+                    log('Response data: ' + JSON.stringify(data));
+
+                    if (data.success) {
+                        resultDiv.innerHTML = `<p class="text-green-400">Success: ${data.message}</p>`;
+                    } else {
+                        resultDiv.innerHTML = `<p class="text-red-400">Error: ${data.error}</p>`;
+                        log('❌ Background removal failed: ' + (data.error || 'Unknown error'), 'error');
+                    }
+                }
+            } catch (error) {
+                log('❌ Background removal error: ' + error.message, 'error');
+                resultDiv.innerHTML = `<p class="text-red-400">Error: ${error.message}</p>`;
+            }
+        }
+
+        // Auto-test on load
+        window.addEventListener('load', () => {
+            log('Page loaded, API URL: ' + API_BASE_URL);
+        });
+    </script>
+</body>
+</html>
